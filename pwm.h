@@ -2,6 +2,7 @@
 #define PWM_H_
 
 void SetDutyCycle(unsigned int DutyCycle, unsigned int Frequency, int dir);
+void SetDutyCycleServo(unsigned int DutyCycle);
 void InitPWM();
 void PWM_ISR();
 
