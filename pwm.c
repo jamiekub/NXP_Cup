@@ -33,13 +33,19 @@ void SetDutyCycle(unsigned int DutyCycle, unsigned int Frequency, int dir, int w
   
 	// Set outputs 
 	if(wheelSel == 1 && dir == 1)
-      {FTM0_C0V = mod; FTM0_C1V=0; FTM0_C2V=0; FTM0_C3V=0;}
-    else if(wheelSel == 1 && dir == 0)
-	    {FTM0_C1V = mod; FTM0_C0V=0; FTM0_C2V=0; FTM0_C3V=0;}
-    else if(wheelSel == 0 && dir == 1)
-	    {FTM0_C2V = mod; FTM0_C0V=0; FTM0_C1V=0; FTM0_C3V=0;}
-    else
-      {FTM0_C3V = mod; FTM0_C0V=0; FTM0_C1V=0; FTM0_C2V=0;}
+    {FTM0_C0V = mod; FTM0_C1V=0; FTM0_C2V=0; FTM0_C3V=0;}
+  else if(wheelSel == 1 && dir == 0)
+	  {FTM0_C1V = mod; FTM0_C0V=0; FTM0_C2V=0; FTM0_C3V=0;}
+  else if(wheelSel == 0 && dir == 1)
+	  {FTM0_C2V = mod; FTM0_C0V=0; FTM0_C1V=0; FTM0_C3V=0;}
+	else if(wheelSel == 0 && dir == 0)
+		{FTM0_C3V = mod; FTM0_C0V=0; FTM0_C1V=0; FTM0_C2V=0;}
+  else if(wheelSel == 2 && dir == 1)
+    {FTM0_C0V = mod; FTM0_C2V=mod; FTM0_C1V=0; FTM0_C3V=0;}
+  else if(wheelSel == 2 && dir == 0)
+		{FTM0_C1V = mod; FTM0_C3V=mod; FTM0_C0V=0; FTM0_C2V=0;}
+  else
+	  {FTM0_C1V = 0; FTM0_C2V=0; FTM0_C1V=0; FTM0_C3V=0;}
 
 	// Update the clock to the new frequency
 	FTM0_MOD = (CLOCK/Frequency);
