@@ -26,16 +26,20 @@ static volatile unsigned int PWMTick = 0;
  * @param Frequency (~1000 Hz to 20000 Hz)
  * @param dir: 1 for C4 active, else C3 active 
  */
-void SetDutyCycle(unsigned int DutyCycle, unsigned int Frequency, int dir)
+void SetDutyCycle(unsigned int DutyCycle, unsigned int Frequency, int dir, int wheelSel)
 {
 	// Calculate the new cutoff value
 	uint16_t mod = (uint16_t) (((CLOCK/Frequency) * DutyCycle) / 100);
   
 	// Set outputs 
-	if(dir==1)
-    {FTM0_C3V = mod; FTM0_C2V=0;}
-  else
-    {FTM0_C2V = mod; FTM0_C3V=0;}
+	if(wheelSel == 1 && dir == 1)
+      {FTM0_C0V = mod; FTM0_C1V=0; FTM0_C2V=0; FTM0_C3V=0;}
+    else if(wheelSel == 1 && dir == 0)
+	    {FTM0_C1V = mod; FTM0_C0V=0; FTM0_C2V=0; FTM0_C3V=0;}
+    else if(wheelSel == 0 && dir == 1)
+	    {FTM0_C2V = mod; FTM0_C0V=0; FTM0_C1V=0; FTM0_C3V=0;}
+    else
+      {FTM0_C3V = mod; FTM0_C0V=0; FTM0_C1V=0; FTM0_C2V=0;}
 
 	// Update the clock to the new frequency
 	FTM0_MOD = (CLOCK/Frequency);
@@ -66,8 +70,11 @@ void InitPWM()
 	// Use drive strength enable flag to high drive strength
 	//These port/pins may need to be updated for the K64 <Yes, they do. Here are two that work.>
 	
+	//FTM0
+	PORTC_PCR3  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch0
+  PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch1
   PORTC_PCR3  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch2
-  PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK;//Ch3
+  PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch3
 	
 	PORTB_PCR18 = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM2 Ch0
 	
@@ -98,6 +105,14 @@ void InitPWM()
 	// See Table 39-67,  Edge-aligned PWM, Low-true pulses (clear out on match)
 	FTM0_C2SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
 	FTM0_C2SC &= ~FTM_CnSC_ELSA_MASK;
+	
+	// See Table 39-67,  Edge-aligned PWM, Low-true pulses (clear out on match)
+	FTM0_C1SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
+	FTM0_C1SC &= ~FTM_CnSC_ELSA_MASK;
+	
+	// See Table 39-67,  Edge-aligned PWM, Low-true pulses (clear out on match)
+	FTM0_C0SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
+	FTM0_C0SC &= ~FTM_CnSC_ELSA_MASK;
 	
 	// Same for Channel 0 FTM2
 	FTM2_C0SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
