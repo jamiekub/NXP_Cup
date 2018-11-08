@@ -10,10 +10,18 @@
 #include "MK64F12.h"
 #include "uart.h"
 #include "PWM.h"
+#include "camera_FTM.h"
+#include "isr.h"
 
-void initialize();
-void en_interrupts();
-void delay();
+// Default System clock value
+// period = 1/20485760  = 4.8814395e-8
+#ifndef DEFAULT_SYSTEM_CLOCK
+#define DEFAULT_SYSTEM_CLOCK 20485760u
+#endif
+
+void initialize(void);
+void en_interrupts(void);
+void delay(int del);
 
 int main(void)
 {
@@ -32,25 +40,20 @@ int main(void)
 	//Step 9
 	for(;;)  //loop forever
 	{
-		uint16_t dc = 0;
 		uint16_t freq = 10000; /* Frequency = 10 kHz */
-		uint16_t dir = 0;
-		char c = 48;
-		int i=0;
 		
-	  SetDutyCycle(50, freq, 1);
+	  SetDutyCycle(50, freq, 1, 1);
 		SetDutyCycleServo(5);
 		delay(100);
-		SetDutyCycle(0, freq, 1);
+		SetDutyCycle(0, freq, 1, 1);
 		SetDutyCycleServo(10);
 		delay(100);
-		SetDutyCycle(50, freq, 0);
+		SetDutyCycle(50, freq, 0, 1);
 		delay(100);
 
 	}
-	return 0;
+  return 0;
 }
-
 
 /**
  * Waits for a delay (in milliseconds)
@@ -68,7 +71,10 @@ void initialize()
 {
 	// Initialize UART
 	uart_init();	
-	
-	// Initialize the FlexTimer
-	InitPWM();
+  InitGPIO(); // For CLK and SI output on GPIO
+  InitFTM2(); // To generate CLK, SI, and trigger ADC
+  InitADC0();
+  InitPIT();	// To trigger camera read based on integration time
+  // Initialize the FlexTimer
+  InitPWM();
 }

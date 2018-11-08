@@ -71,8 +71,8 @@ void InitPWM()
 	//These port/pins may need to be updated for the K64 <Yes, they do. Here are two that work.>
 	
 	//FTM0
-	PORTC_PCR3  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch0
-  PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch1
+	PORTC_PCR1  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch0
+  PORTC_PCR2  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch1
   PORTC_PCR3  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch2
   PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch3
 	
