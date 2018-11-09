@@ -28,6 +28,9 @@ void delay(int del);
 int main(void)
 { 
   int cam_data[128];
+  int firstZeros = 0;
+	int ones = 0;
+	int secondZeros = 0;
   
 	// Initialize UART and PWM
 	initialize();
@@ -47,6 +50,41 @@ int main(void)
 		uint16_t freq = 10000; /* Frequency = 10 kHz */
 		
 	  SetDutyCycle(30, freq, 1, 2);
+		
+		for (int i = 0; i<103; i++)
+		{
+			if(cam_data[i] == 0 && ones == 0)
+			{
+				firstZeros += 1;
+			}
+			else if(cam_data[i] == 1)
+			{
+				ones += 1;
+			}
+			else
+			{
+				secondZeros += 1;
+			}	
+		}
+		
+		//If > 1.1 turns left, if < .9 turns right
+		int ratio = firstZeros/secondZeros;
+		if(ratio > 1.1 && ratio < 1.3)
+		{
+			SetDutyCycleServo(6.5);
+		}
+		else if(ratio > 1.3)
+		{
+			SetDutyCycleServo(5.5);
+		}
+		else if(ratio < .9 && ratio > .7)
+		{
+			SetDutyCycleServo(8.5);
+		}
+		else
+		{
+			SetDutyCycleServo(9.5);
+		}
     //delay(100);
 		//SetDutyCycleServo(5);
 		//delay(100);
