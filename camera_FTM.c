@@ -67,30 +67,56 @@
 //	} //for
 //} //main
 
-int debugdata = 1;
+int debugdata = 0;
 char string [100];
 
 void filter(uint16_t* cam_data)
 {  
-   for (int i = 0; i<123; i++)
-    {
-      cam_data[i] += cam_data[i+1] + cam_data[i+2] + cam_data[i+3] + cam_data[i+4];
-      cam_data[i] = cam_data[i]/5.0;
-    }
-
+  double maxval = 0.0;
+  
+   if (debugdata == 2) {
+			// Every 2 seconds
+		  // send the array over uart
+			sprintf(string,"%i\n\r",-1); // start value
+			put(string);
+			for (int i = 0; i < 127; i++) {
+				sprintf(string,"%i\n", cam_data[i]);
+				put(string);
+			}
+				sprintf(string,"%i\n\r",-2); // end value
+				put(string);
+		}
+  
     if (debugdata)
     {
       put("\n\r");
-      for (int i = 0; i < 123; i++) {
+      for (int i = 0; i < 128; i++) {
   	  	sprintf(string," %i ", cam_data[i]);
 		  	put(string);
 		  }
       put("\n\r");    
     }
+   
+   for (int i = 0; i<123; i++)
+   {
+     cam_data[i] = cam_data[i]/5.0 + cam_data[i+1]/5.0 + cam_data[i+2]/5.0 + cam_data[i+3]/5.0 + cam_data[i+4]/5.0;
+     if (cam_data[i] > maxval)
+       maxval = cam_data[i];
+   }
+
+   if (debugdata)
+   {
+     put("\n\r");
+     for (int i = 0; i < 123; i++) {
+  	 	sprintf(string," %i ", cam_data[i]);
+		 	put(string);
+		 }
+     put("\n\r");    
+   }
     
     for (int i = 0; i<123; i++)
     {
-      if (cam_data[i] >= 7000)
+      if (cam_data[i] >= 0.7*maxval)
       {
         cam_data[i] = 1;
       }
@@ -105,25 +131,6 @@ void filter(uint16_t* cam_data)
       put("\n\r");
       for (int i = 0; i < 123; i++) {
   	  	sprintf(string,"%i", cam_data[i]);
-			  put(string);
-		  }
-      put("\n\r");
-    }
-    
-    for (int i = 0; i<103; i++)
-    {
-      for (int j = 0; j<20; j++)
-      {
-        cam_data[i] += cam_data[i+j];
-      }
-      cam_data[i] = cam_data[i]/20.0;
-    }
-    
-    if (debugdata)
-    {
-      put("\n\r");
-      for (int i = 0; i < 103; i++) {
-  		  sprintf(string,"%i", cam_data[i]);
 			  put(string);
 		  }
       put("\n\r");

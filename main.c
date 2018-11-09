@@ -6,6 +6,7 @@
  * Created:  
  * Modified:  
  */
+#include "stdio.h"
 #include "MK64F12.h"
 #include "uart.h"
 #include "PWM.h"
@@ -33,6 +34,7 @@ int main(void)
 	int ones = 0;
 	double secondZeros = 0;
   double ratio = 1;
+  char string[100];
   
 	// Initialize UART and PWM
 	initialize();
@@ -51,7 +53,7 @@ int main(void)
 		
 	  SetDutyCycle(30, freq, 1, 2);
 		
-		for (int i = 0; i<103; i++)
+		for (int i = 0; i<123; i++)
 		{
 			if(cam_data[i] == 0 && ones == 0)
 			{
@@ -70,41 +72,33 @@ int main(void)
 		//If > 1.1 turns left, if < .9 turns right
 		ratio = firstZeros/secondZeros;
     
-		if(ratio > 1.1 && ratio < 1.3)
+    //sprintf(string, "\n\rfirst0 %f second0 %f ratio %f\n\r", firstZeros, secondZeros, ratio);
+    //put(string);
+    
+		if(ratio < 5.0 && ratio > 1.0)
 		{
-			SetDutyCycleServo(6.5);
+			SetDutyCycleServo(6.0); //left
 		}
-		else if(ratio > 1.3)
+//		else if(ratio > 1.3)
+//		{
+//			SetDutyCycleServo(5.5);
+//		}
+//		else if(ratio < 0.9 && ratio > 0.7)
+//		{
+//			SetDutyCycleServo(8.5);
+//		}
+		else if(ratio < 0.4)
 		{
-			SetDutyCycleServo(5.5);
-		}
-		else if(ratio < 0.9 && ratio > 0.7)
-		{
-			SetDutyCycleServo(8.5);
-		}
-		else if(ratio < 0.7)
-		{
-			SetDutyCycleServo(9.5);
+			SetDutyCycleServo(9.0); //right
 		}
     else
     {
-      SetDutyCycleServo(7.5);
+      SetDutyCycleServo(7.6);
     }
     
     ones = 0;
     firstZeros = 0;
     secondZeros = 0;
-    
-    //delay(100);
-		//SetDutyCycleServo(5);
-		//delay(100);
-		//SetDutyCycle(0, freq, 1, 2);
-    //delay(100);
-		//SetDutyCycleServo(7.5);
-		//delay(100);
-		//SetDutyCycle(30, freq, 0, 2);
-		//delay(500);
-
 	}
   return 0;
 }
