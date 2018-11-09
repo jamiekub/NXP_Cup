@@ -60,7 +60,7 @@ int main(void)
     
     for (int i = 0; i<123; i++)
     {
-      if (cam_data[i] >= 9000)
+      if (cam_data[i] >= 7000)
       {
         cam_data[i] = 1;
       }
@@ -72,6 +72,22 @@ int main(void)
     
     put("\n\r");
     for (int i = 0; i < 123; i++) {
+  		sprintf(str,"%i", cam_data[i]);
+			put(str);
+		}
+    put("\n\r");
+    
+    for (int i = 0; i<103; i++)
+    {
+      for (int j = 0; j<20; j++)
+      {
+        cam_data[i] += cam_data[i+j];
+      }
+      cam_data[i] = cam_data[i]/20.0;
+    }
+    
+    put("\n\r");
+    for (int i = 0; i < 103; i++) {
   		sprintf(str,"%i", cam_data[i]);
 			put(str);
 		}
