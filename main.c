@@ -31,6 +31,7 @@ int main(void)
   int firstZeros = 0;
 	int ones = 0;
 	int secondZeros = 0;
+  int ratio = 1;
   
 	// Initialize UART and PWM
 	initialize();
@@ -66,9 +67,10 @@ int main(void)
 				secondZeros += 1;
 			}	
 		}
-		
+    
 		//If > 1.1 turns left, if < .9 turns right
-		int ratio = firstZeros/secondZeros;
+		ratio = firstZeros/secondZeros;
+    
 		if(ratio > 1.1 && ratio < 1.3)
 		{
 			SetDutyCycleServo(6.5);
@@ -77,14 +79,23 @@ int main(void)
 		{
 			SetDutyCycleServo(5.5);
 		}
-		else if(ratio < .9 && ratio > .7)
+		else if(ratio < 0.9 && ratio > 0.7)
 		{
 			SetDutyCycleServo(8.5);
 		}
-		else
+		else if(ratio < 0.7)
 		{
 			SetDutyCycleServo(9.5);
 		}
+    else
+    {
+      SetDutyCycleServo(7.5);
+    }
+    
+    ones = 0;
+    firstZeros = 0;
+    secondZeros = 0;
+    
     //delay(100);
 		//SetDutyCycleServo(5);
 		//delay(100);
