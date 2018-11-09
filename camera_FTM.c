@@ -67,6 +67,69 @@
 //	} //for
 //} //main
 
+int debugcamdata = 0;
+char str [100];
+
+void filter(int* cam_data)
+{  
+   for (int i = 0; i<123; i++)
+    {
+      cam_data[i] += cam_data[i+1] + cam_data[i+2] + cam_data[i+3] + cam_data[i+4];
+      cam_data[i] = cam_data[i]/5.0;
+    }
+
+    if (debugcamdata)
+    {
+      put("\n\r");
+      for (int i = 0; i < 123; i++) {
+  	  	sprintf(str," %i ", cam_data[i]);
+		  	put(str);
+		  }
+      put("\n\r");    
+    }
+    
+    for (int i = 0; i<123; i++)
+    {
+      if (cam_data[i] >= 7000)
+      {
+        cam_data[i] = 1;
+      }
+      else
+      {
+        cam_data[i] = 0;
+      }
+    }
+    
+    if (debugcamdata)
+    {
+      put("\n\r");
+      for (int i = 0; i < 123; i++) {
+  	  	sprintf(str,"%i", cam_data[i]);
+			  put(str);
+		  }
+      put("\n\r");
+    }
+    
+    for (int i = 0; i<103; i++)
+    {
+      for (int j = 0; j<20; j++)
+      {
+        cam_data[i] += cam_data[i+j];
+      }
+      cam_data[i] = cam_data[i]/20.0;
+    }
+    
+    if (debugcamdata)
+    {
+      put("\n\r");
+      for (int i = 0; i < 103; i++) {
+  		  sprintf(str,"%i", cam_data[i]);
+			  put(str);
+		  }
+      put("\n\r");
+    }
+  }
+
 /* Initialization of FTM2 for camera */
 void InitFTM3(){
 	// Enable clock

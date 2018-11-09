@@ -51,7 +51,7 @@ void SetDutyCycle(unsigned int DutyCycle, unsigned int Frequency, int dir, int w
 	FTM0_MOD = (CLOCK/Frequency);
 }
 
-void SetDutyCycleServo(unsigned int DutyCycle)
+void SetDutyCycleServo(double DutyCycle)
 {
 	// Calculate the new cutoff value
 	uint16_t mod = (uint16_t) ((FTM2_MOD_VALUE * DutyCycle) / 100);

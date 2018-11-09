@@ -6,13 +6,12 @@
  * Created:  
  * Modified:  
  */
-#include "stdio.h"
-#include <string.h>
 #include "MK64F12.h"
 #include "uart.h"
 #include "PWM.h"
 #include "camera_FTM.h"
 #include "isr.h"
+#include <string.h>
 
 // Default System clock value
 // period = 1/20485760  = 4.8814395e-8
@@ -27,9 +26,8 @@ void en_interrupts(void);
 void delay(int del);
 
 int main(void)
-{
-  uint16_t cam_data[128];
-  char str [100];
+{ 
+  int cam_data[128];
   
 	// Initialize UART and PWM
 	initialize();
@@ -42,66 +40,19 @@ int main(void)
 	
 	//Step 9
 	for(;;)  //loop forever
-	{
+	{ 
     memcpy(cam_data, (void*)getLine(), sizeof(cam_data));
-    
-    for (int i = 0; i<123; i++)
-    {
-      cam_data[i] += cam_data[i+1] + cam_data[i+2] + cam_data[i+3] + cam_data[i+4];
-      cam_data[i] = cam_data[i]/5.0;
-    }
-
-    put("\n\r");
-    for (int i = 0; i < 123; i++) {
-  		sprintf(str," %i ", cam_data[i]);
-			put(str);
-		}
-    put("\n\r");    
-    
-    for (int i = 0; i<123; i++)
-    {
-      if (cam_data[i] >= 7000)
-      {
-        cam_data[i] = 1;
-      }
-      else
-      {
-        cam_data[i] = 0;
-      }
-    }
-    
-    put("\n\r");
-    for (int i = 0; i < 123; i++) {
-  		sprintf(str,"%i", cam_data[i]);
-			put(str);
-		}
-    put("\n\r");
-    
-    for (int i = 0; i<103; i++)
-    {
-      for (int j = 0; j<20; j++)
-      {
-        cam_data[i] += cam_data[i+j];
-      }
-      cam_data[i] = cam_data[i]/20.0;
-    }
-    
-    put("\n\r");
-    for (int i = 0; i < 103; i++) {
-  		sprintf(str,"%i", cam_data[i]);
-			put(str);
-		}
-    put("\n\r");
+    filter(cam_data);
     
 		uint16_t freq = 10000; /* Frequency = 10 kHz */
 		
-	  //SetDutyCycle(30, freq, 1, 2);
+	  SetDutyCycle(30, freq, 1, 2);
     //delay(100);
 		//SetDutyCycleServo(5);
-		//delay(500);
+		//delay(100);
 		//SetDutyCycle(0, freq, 1, 2);
     //delay(100);
-		//SetDutyCycleServo(10);
+		//SetDutyCycleServo(7.5);
 		//delay(100);
 		//SetDutyCycle(30, freq, 0, 2);
 		//delay(500);
