@@ -67,10 +67,10 @@
 //	} //for
 //} //main
 
-int debugcamdata = 0;
-char str [100];
+int debugdata = 1;
+char string [100];
 
-void filter(int* cam_data)
+void filter(uint16_t* cam_data)
 {  
    for (int i = 0; i<123; i++)
     {
@@ -78,12 +78,12 @@ void filter(int* cam_data)
       cam_data[i] = cam_data[i]/5.0;
     }
 
-    if (debugcamdata)
+    if (debugdata)
     {
       put("\n\r");
       for (int i = 0; i < 123; i++) {
-  	  	sprintf(str," %i ", cam_data[i]);
-		  	put(str);
+  	  	sprintf(string," %i ", cam_data[i]);
+		  	put(string);
 		  }
       put("\n\r");    
     }
@@ -100,12 +100,12 @@ void filter(int* cam_data)
       }
     }
     
-    if (debugcamdata)
+    if (debugdata)
     {
       put("\n\r");
       for (int i = 0; i < 123; i++) {
-  	  	sprintf(str,"%i", cam_data[i]);
-			  put(str);
+  	  	sprintf(string,"%i", cam_data[i]);
+			  put(string);
 		  }
       put("\n\r");
     }
@@ -119,12 +119,12 @@ void filter(int* cam_data)
       cam_data[i] = cam_data[i]/20.0;
     }
     
-    if (debugcamdata)
+    if (debugdata)
     {
       put("\n\r");
       for (int i = 0; i < 103; i++) {
-  		  sprintf(str,"%i", cam_data[i]);
-			  put(str);
+  		  sprintf(string,"%i", cam_data[i]);
+			  put(string);
 		  }
       put("\n\r");
     }

@@ -27,11 +27,12 @@ void delay(int del);
 
 int main(void)
 { 
-  int cam_data[128];
-  int firstZeros = 0;
+  uint16_t freq = 10000; /* Frequency = 10 kHz */
+  uint16_t cam_data[128];
+  double firstZeros = 0;
 	int ones = 0;
-	int secondZeros = 0;
-  int ratio = 1;
+	double secondZeros = 0;
+  double ratio = 1;
   
 	// Initialize UART and PWM
 	initialize();
@@ -47,8 +48,6 @@ int main(void)
 	{ 
     memcpy(cam_data, (void*)getLine(), sizeof(cam_data));
     filter(cam_data);
-    
-		uint16_t freq = 10000; /* Frequency = 10 kHz */
 		
 	  SetDutyCycle(30, freq, 1, 2);
 		
@@ -58,7 +57,7 @@ int main(void)
 			{
 				firstZeros += 1;
 			}
-			else if(cam_data[i] == 1)
+			else if(cam_data[i])
 			{
 				ones += 1;
 			}
