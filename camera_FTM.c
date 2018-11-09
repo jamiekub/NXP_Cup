@@ -68,51 +68,51 @@
 //} //main
 
 /* Initialization of FTM2 for camera */
-void InitFTM2(){
+void InitFTM3(){
 	// Enable clock
-	SIM_SCGC6 |= SIM_SCGC6_FTM2_MASK;
+	SIM_SCGC3 |= SIM_SCGC3_FTM3_MASK;
 
 	// Disable Write Protection
-	FTM2_MODE |= FTM_MODE_WPDIS_MASK;
+	FTM3_MODE |= FTM_MODE_WPDIS_MASK;
 	
 	// Set output to '1' on init
-	FTM2_OUTINIT |= FTM_OUTINIT_CH0OI_MASK;
+	FTM3_OUTINIT |= FTM_OUTINIT_CH0OI_MASK;
 	
   // Set the Counter Initial Value to 0
-	FTM2_CNTIN = 0;
+	FTM3_CNTIN = 0;
   
 	// Initialize the CNT to 0 before writing to MOD
-	FTM2_CNT = 0;
+	FTM3_CNT = 0;
 	
 	// Set the period (~10us)
-	FTM2_MOD = FTM_MOD_MOD(DEFAULT_SYSTEM_CLOCK/100000.0);
+	FTM3_MOD = FTM_MOD_MOD(DEFAULT_SYSTEM_CLOCK/100000.0);
 	
   // Set edge-aligned mode
-	FTM2_C0SC |= FTM_CnSC_MSB_MASK;
+	FTM3_C0SC |= FTM_CnSC_MSB_MASK;
   
 	// 50% duty
-	FTM2_C0V = FTM_CnV_VAL(DEFAULT_SYSTEM_CLOCK/200000.0);
+	FTM3_C0V = FTM_CnV_VAL(DEFAULT_SYSTEM_CLOCK/200000.0);
 	
 	// Enable High-true pulses
 	// ELSB = 1, ELSA = 0
-	FTM2_C0SC |= FTM_CnSC_ELSB_MASK;
-  FTM2_C0SC &=~ FTM_CnSC_ELSA_MASK;
+	FTM3_C0SC |= FTM_CnSC_ELSB_MASK;
+  FTM3_C0SC &=~ FTM_CnSC_ELSA_MASK;
 	
   // init external hardware trigger 
-  FTM2_EXTTRIG |= FTM_EXTTRIG_INITTRIGEN_MASK;
+  FTM3_EXTTRIG |= FTM_EXTTRIG_INITTRIGEN_MASK;
   
 	// Enable hardware trigger from FTM2
-	FTM2_EXTTRIG |= FTM_EXTTRIG_CH0TRIG_MASK;
+	FTM3_EXTTRIG |= FTM_EXTTRIG_CH0TRIG_MASK;
 	
 	// Don't enable interrupts yet (disable)
-	FTM2_SC &=~ FTM_SC_TOIE_MASK;
+	FTM3_SC &=~ FTM_SC_TOIE_MASK;
 	
 	// No prescalar, system clock
-	FTM2_SC = FTM_SC_PS(000);
-  FTM2_SC = FTM_SC_CLKS(01);
+	FTM3_SC = FTM_SC_PS(000);
+  FTM3_SC = FTM_SC_CLKS(01);
 	
 	// Set up interrupt
-	NVIC_EnableIRQ(FTM2_IRQn);
+	NVIC_EnableIRQ(FTM3_IRQn);
 	
 	return;
 }
@@ -202,7 +202,7 @@ void InitADC0(void) {
   ADC0_SC2 |= ADC_SC2_ADTRG_MASK;
 	
 	// Set up FTM2 trigger on ADC0
-	SIM_SOPT7 |= SIM_SOPT7_ADC0TRGSEL(10); // FTM2 select
+	SIM_SOPT7 |= SIM_SOPT7_ADC0TRGSEL(11); // FTM3 select
 	SIM_SOPT7 |= SIM_SOPT7_ADC0ALTTRGEN_MASK; // Alternative trigger en.
 	SIM_SOPT7 &=~ SIM_SOPT7_ADC0PRETRGSEL_MASK; // Pretrigger A
 	

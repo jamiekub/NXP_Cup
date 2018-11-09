@@ -15,18 +15,18 @@
 // Pixel counter for camera logic
 // Starts at -2 so that the SI pulse occurs
 // ADC reads start
-int pixcnt; // -2
+int pixcnt = -2; // -2
 
 // clkval toggles with each FTM interrupt
-int clkval; // 0
+int clkval = 0; // 0
 
 // line stores the current array of camera data
 uint16_t line[128];
 
 // These variables are for streaming the camera
 // data over UART
-int debugcamdata; // 0
-int capcnt; // 0
+int debugcamdata = 0; // 0
+int capcnt = 0; // 0
 char str[100];
 
 // ADC0VAL holds the current ADC value
@@ -43,16 +43,16 @@ void ADC0_IRQHandler(void) {
 }
 
 /* 
-* FTM2 handles the camera driving logic
+* FTM3 handles the camera driving logic
 *	This ISR gets called once every integration period
 *		by the periodic interrupt timer 0 (PIT0)
 *	When it is triggered it gives the SI pulse,
 *		toggles clk for 128 cycles, and stores the line
 *		data from the ADC into the line variable
 */
-void FTM2_IRQHandler(void){ //For FTM timer
+void FTM3_IRQHandler(void){ //For FTM timer
 	// Clear interrupt
-  FTM2_SC &=~ FTM_SC_TOF_MASK;
+  FTM3_SC &=~ FTM_SC_TOF_MASK;
 	
 	// Toggle clk
 	GPIOB_PTOR = (1LU << 9);
@@ -78,9 +78,9 @@ void FTM2_IRQHandler(void){ //For FTM timer
 		GPIOB_PCOR |= (1 << 9); // CLK = 0
 		clkval = 0; // make sure clock variable = 0
 		pixcnt = -2; // reset counter
-		// Disable FTM2 interrupts (until PIT0 overflows
+		// Disable FTM3 interrupts (until PIT0 overflows
 		//   again and triggers another line capture)
-		FTM2_SC &=~ FTM_SC_TOIE_MASK;
+		FTM3_SC &=~ FTM_SC_TOIE_MASK;
 	
 	}
 	return;
@@ -88,9 +88,9 @@ void FTM2_IRQHandler(void){ //For FTM timer
 
 /* PIT0 determines the integration period
 *		When it overflows, it triggers the clock logic from
-*		FTM2. Note the requirement to set the MOD register
+*		FTM3. Note the requirement to set the MOD register
 * 	to reset the FTM counter because the FTM counter is 
-*		always counting, I am just enabling/disabling FTM2 
+*		always counting, I am just enabling/disabling FTM3 
 *		interrupts to control when the line capture occurs
 */
 void PIT0_IRQHandler(void){
@@ -103,10 +103,14 @@ void PIT0_IRQHandler(void){
   PIT_TFLG0 |= PIT_TFLG_TIF_MASK;
 	
 	// Setting mod resets the FTM counter
-	FTM2_MOD = FTM_MOD_MOD(DEFAULT_SYSTEM_CLOCK/100000.0);
+	FTM3_MOD = FTM_MOD_MOD(DEFAULT_SYSTEM_CLOCK/100000.0);
 	
-	// Enable FTM2 interrupts (camera)
-	FTM2_SC |= FTM_SC_TOIE_MASK;
+	// Enable FTM3 interrupts (camera)
+	FTM3_SC |= FTM_SC_TOIE_MASK;
 	
 	return;
+}
+
+int* getLine(){
+  return (int *)line;
 }
