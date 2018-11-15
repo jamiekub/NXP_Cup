@@ -30,10 +30,7 @@ int main(void)
 { 
   uint16_t freq = 10000; /* Frequency = 10 kHz */
   uint16_t cam_data[128];
-  double firstZeros = 0;
-	int ones = 0;
-	double secondZeros = 0;
-  double ratio = 1;
+  double duty = 0;
   char string[100];
   
 	// Initialize UART and PWM
@@ -55,50 +52,17 @@ int main(void)
 		
 		for (int i = 0; i<123; i++)
 		{
-			if(cam_data[i] == 0 && ones == 0)
-			{
-				firstZeros += 1;
-			}
-			else if(cam_data[i])
-			{
-				ones += 1;
-			}
-			else
-			{
-				secondZeros += 1;
-			}	
+			if(cam_data[i])
+      {
+        duty += -9.0*i + 549.0;
+      }
 		}
     
-		//If > 1.1 turns left, if < .9 turns right
-		ratio = firstZeros/secondZeros;
+    sprintf(string, "\n\rduty %f\n\r", duty/7564.0+7.75);
+    put(string);
+    SetDutyCycleServo(duty/7564.0+7.75);
     
-    //sprintf(string, "\n\rfirst0 %f second0 %f ratio %f\n\r", firstZeros, secondZeros, ratio);
-    //put(string);
-    
-		if(ratio < 5.0 && ratio > 1.0)
-		{
-			SetDutyCycleServo(6.0); //left
-		}
-//		else if(ratio > 1.3)
-//		{
-//			SetDutyCycleServo(5.5);
-//		}
-//		else if(ratio < 0.9 && ratio > 0.7)
-//		{
-//			SetDutyCycleServo(8.5);
-//		}
-		else if(ratio < 0.4)
-		{
-			SetDutyCycleServo(9.0); //right
-		}
-    else
-    {
-      SetDutyCycleServo(7.6);
-    }
-    
-    ones = 0;
-    firstZeros = 0;
-    secondZeros = 0;
+    duty = 0;
 	}
   return 0;
 }
