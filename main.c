@@ -61,7 +61,7 @@ int main(void)
       }
 		}
     
-    speed = 70 - fabs(duty)*35.0/15274.3;
+    speed = 70 - fabs(duty)*speed/15274.3;
     
     //sprintf(string, "\n\rduty %f oldduty %f newduty %f\n\r", duty, old_duty, (duty+0.45*old_duty)/15274.3+7.75);
     //put(string);
