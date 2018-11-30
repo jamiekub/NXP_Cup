@@ -22,6 +22,12 @@
 #endif
 
 #define THRESHOLD 10833
+#define MIN_SPEED 30.0
+#define A 30.0
+#define U 61.0
+#define SIGMA 15.0
+#define OFFSET 1.0
+#define PI 3.14159
 
 void initialize(void);
 void en_interrupts(void);
@@ -31,7 +37,7 @@ int main(void)
 { 
   uint16_t freq = 10000; /* Frequency = 10 kHz */
   uint16_t cam_data[128];
-  double speed = 40;
+  double speed = 0;
   double duty = 0;
   double old_duty = 0;
   char string[100];
@@ -51,26 +57,34 @@ int main(void)
     memcpy(cam_data, (void*)getLine(), sizeof(cam_data));
     filter(cam_data);
 		
-    SetDutyCycle(speed, freq, 1, 2);
-		
 		for (int i = 0; i<123; i++)
 		{
 			if(cam_data[i])
       {
-        duty += -12.2*i + 744.2;
+        duty += ((i-183)*i+7442)*i;
+        speed += 6148.0 - 1.6522*(i-61)*(i-61);
+        //speed += 12296.0-3.305*(i-61)*(i-61);
+//        if(i <= U-OFFSET)
+//          speed += A/(sqrt(2*PI)*SIGMA)*exp(-pow((i-U+OFFSET)/SIGMA, 2)/2.0) + MIN_SPEED/123;
+//        else if(i >= U+OFFSET)
+//          speed += A/(sqrt(2*PI)*SIGMA)*exp(-pow((i-U-OFFSET)/SIGMA, 2)/2.0) + MIN_SPEED/123;
+//        else
+//          speed += A/(sqrt(2*PI)*SIGMA) + MIN_SPEED/123;
       }
 		}
     
-    speed = 70 - fabs(duty)*speed/15274.3;
+    SetDutyCycle(speed/10000.0+20.0, freq, 1, 2);
+    //SetDutyCycle(speed, freq, 1, 2);
     
-    //sprintf(string, "\n\rduty %f oldduty %f newduty %f\n\r", duty, old_duty, (duty+0.45*old_duty)/15274.3+7.75);
-    //put(string);
+//    sprintf(string, "\n\rduty %f speed %f\n\r", duty, speed/10000.0+20.0);
+//    put(string);
 
-    duty = duty + (duty - old_duty)*0.7;
-    SetDutyCycleServo((duty)/15270+7.75);
+    //duty = (duty + old_duty)*0.5;
+    SetDutyCycleServo((duty)/1538104.0+7.75);
     
     old_duty = duty;
     duty = 0;
+    speed = 0;
 	}
   return 0;
 }
